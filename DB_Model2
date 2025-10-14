@@ -1,0 +1,170 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema parking_system
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `parking_system` DEFAULT CHARACTER SET utf8 ;
+USE `parking_system` ;
+
+-- -----------------------------------------------------
+-- Table `parking_system`.`admins`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `parking_system`.`admins` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_name` VARCHAR(40) NULL,
+  `password_hash` VARCHAR(255) NULL,
+  `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `email` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `user_name_UNIQUE` (`user_name` ASC) VISIBLE,
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `parking_system`.`vehicles`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `parking_system`.`vehicles` (
+  `plate` VARCHAR(8) NOT NULL,
+  `place_plate` VARCHAR(45) NULL,
+  `is_exempt` TINYINT(1) NULL DEFAULT 0,
+  `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `admins_id` INT NOT NULL,
+  PRIMARY KEY (`plate`),
+  UNIQUE INDEX `plate_UNIQUE` (`plate` ASC) VISIBLE,
+  INDEX `fk_vehicles_admins1_idx` (`admins_id` ASC) VISIBLE,
+  CONSTRAINT `fk_vehicles_admins1`
+    FOREIGN KEY (`admins_id`)
+    REFERENCES `parking_system`.`admins` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `parking_system`.`rates`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `parking_system`.`rates` (
+  `id_rates` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `price_per_minute` DOUBLE NOT NULL,
+  `min_charge` DOUBLE NOT NULL,
+  `grace_minutes` INT NOT NULL,
+  `active` TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `admins_id` INT NOT NULL,
+  PRIMARY KEY (`id_rates`),
+  UNIQUE INDEX `id_rates_UNIQUE` (`id_rates` ASC) VISIBLE,
+  INDEX `fk_rates_admins1_idx` (`admins_id` ASC) VISIBLE,
+  CONSTRAINT `fk_rates_admins1`
+    FOREIGN KEY (`admins_id`)
+    REFERENCES `parking_system`.`admins` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `parking_system`.`payments`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `parking_system`.`payments` (
+  `payment_id` INT NOT NULL AUTO_INCREMENT,
+  `vehicle_plate` VARCHAR(8) NOT NULL,
+  `amount` DECIMAL(10,2) NOT NULL,
+  `payment_method` VARCHAR(50) NULL,
+  `payment_status` ENUM('PENDING','COMPLETED','FAILED','CANCELLED') DEFAULT 'PENDING',
+  `transaction_ref` VARCHAR(100) NULL,
+  `payment_date` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`payment_id`),
+  INDEX `fk_payments_vehicle_idx` (`vehicle_plate` ASC) VISIBLE,
+  CONSTRAINT `fk_payments_vehicle`
+    FOREIGN KEY (`vehicle_plate`)
+    REFERENCES `parking_system`.`vehicles` (`plate`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `parking_system`.`parking_sessions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `parking_system`.`parking_sessions` (
+  `id_parking` INT NOT NULL AUTO_INCREMENT,
+  `vehicle_plate` VARCHAR(8) NOT NULL,
+  `rate_id` INT NOT NULL,
+  `payment_id` INT NULL,
+  `entry_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `exit_time` DATETIME NULL,
+  `total_time_minutes` INT NULL,
+  `total_price` DECIMAL(10,2) NULL,
+  `is_paid` TINYINT(1) DEFAULT 0,
+  `active` TINYINT(1) DEFAULT 1,
+  PRIMARY KEY (`id_parking`),
+  INDEX `fk_parking_vehicle_idx` (`vehicle_plate` ASC) VISIBLE,
+  INDEX `fk_parking_rate_idx` (`rate_id` ASC) VISIBLE,
+  INDEX `fk_parking_payment_idx` (`payment_id` ASC) VISIBLE,
+  CONSTRAINT `fk_parking_vehicle`
+    FOREIGN KEY (`vehicle_plate`)
+    REFERENCES `parking_system`.`vehicles` (`plate`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_parking_rate`
+    FOREIGN KEY (`rate_id`)
+    REFERENCES `parking_system`.`rates` (`id_rates`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_parking_payment`
+    FOREIGN KEY (`payment_id`)
+    REFERENCES `parking_system`.`payments` (`payment_id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `parking_system`.`audit_logs`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `parking_system`.`audit_logs` (
+  `log_id` INT NOT NULL AUTO_INCREMENT,
+  `admin_id` INT NOT NULL,
+  `vehicle_plate` VARCHAR(8) NULL,
+  `parking_session_id` INT NULL,
+  `action` VARCHAR(100) NOT NULL,
+  `details` TEXT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`log_id`),
+  INDEX `fk_audit_admin_idx` (`admin_id` ASC) VISIBLE,
+  INDEX `fk_audit_vehicle_idx` (`vehicle_plate` ASC) VISIBLE,
+  INDEX `fk_audit_parking_idx` (`parking_session_id` ASC) VISIBLE,
+  CONSTRAINT `fk_audit_admin`
+    FOREIGN KEY (`admin_id`)
+    REFERENCES `parking_system`.`admins` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_audit_vehicle`
+    FOREIGN KEY (`vehicle_plate`)
+    REFERENCES `parking_system`.`vehicles` (`plate`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_audit_parking`
+    FOREIGN KEY (`parking_session_id`)
+    REFERENCES `parking_system`.`parking_sessions` (`id_parking`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
