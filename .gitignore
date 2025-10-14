@@ -1,2 +1,8 @@
 vision-api/venv/
 vision-api/app/__pycache__/
+
+
+
+
+parking-system-backend/node_modules
+parking-system-backend/.env
