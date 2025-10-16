@@ -3,14 +3,14 @@ import logger from "../utils/logger.js";
 import { createError } from "../middleware/errorHandler.js";
 
 class SessionController {
-  // 📋 Obtener todas las sesiones activas
+  // Get all active sessions
   async getAllActiveSessions(req, res, next) {
     try {
-      logger.info("📋 Consultando todas las sesiones activas");
+      logger.info("Fetching all active sessions");
 
       const activeSessions = await ParkingSessionRepository.findAllActive();
 
-      logger.info("✅ Sesiones activas obtenidas", {
+      logger.info("Active sessions retrieved", {
         count: activeSessions.length,
       });
 
@@ -20,31 +20,31 @@ class SessionController {
         data: activeSessions,
       });
     } catch (error) {
-      logger.error("❌ Error al obtener sesiones activas", {
+      logger.error("Error retrieving active sessions", {
         error: error.message,
       });
       next(error);
     }
   }
 
-  // 🔍 Obtener sesión activa por placa
+  // Get active session by license plate
   async getActiveSessionByPlate(req, res, next) {
     try {
       const { plate } = req.params;
 
       if (!plate) {
-        throw createError("Placa no proporcionada", 400);
+        throw createError("License plate not provided", 400);
       }
 
-      logger.info("🔍 Buscando sesión activa", { plate });
+      logger.info("Searching for active session", { plate });
 
       const session = await ParkingSessionRepository.findActiveByPlate(plate);
 
       if (!session) {
-        throw createError("No hay sesión activa para esta placa", 404);
+        throw createError("No active session found for this license plate", 404);
       }
 
-      logger.info("✅ Sesión encontrada", {
+      logger.info("Active session found", {
         plate,
         sessionId: session.id_parking,
       });
@@ -54,7 +54,7 @@ class SessionController {
         data: session,
       });
     } catch (error) {
-      logger.error("❌ Error al buscar sesión", {
+      logger.error("Error finding active session", {
         error: error.message,
         plate: req.params.plate,
       });
@@ -62,35 +62,35 @@ class SessionController {
     }
   }
 
-  // 📊 Obtener sesión activa con información de tarifa
+  // Get active session with rate information
   async getActiveSessionWithRate(req, res, next) {
     try {
       const { plate } = req.params;
 
       if (!plate) {
-        throw createError("Placa no proporcionada", 400);
+        throw createError("License plate not provided", 400);
       }
 
-      logger.info("🔍 Buscando sesión activa con tarifa", { plate });
+      logger.info("Searching for active session with rate", { plate });
 
       const session = await ParkingSessionRepository.findActiveWithRate(plate);
 
       if (!session) {
-        throw createError("No hay sesión activa para esta placa", 404);
+        throw createError("No active session found for this license plate", 404);
       }
 
-      // Calcular tiempo transcurrido
+      // Calculate elapsed time
       const entryTime = new Date(session.entry_time);
       const currentTime = new Date();
       const elapsedMinutes = Math.ceil((currentTime - entryTime) / 60000);
 
-      // Calcular precio actual
+      // Calculate current price
       let currentPrice = elapsedMinutes * session.price_per_minute;
       if (session.min_charge && currentPrice < session.min_charge) {
         currentPrice = session.min_charge;
       }
 
-      logger.info("✅ Sesión con tarifa encontrada", {
+      logger.info("Active session with rate found", {
         plate,
         sessionId: session.id_parking,
         elapsedMinutes,
@@ -106,7 +106,7 @@ class SessionController {
         },
       });
     } catch (error) {
-      logger.error("❌ Error al buscar sesión con tarifa", {
+      logger.error("Error retrieving active session with rate", {
         error: error.message,
         plate: req.params.plate,
       });
@@ -114,10 +114,10 @@ class SessionController {
     }
   }
 
-  // 📊 Obtener estadísticas de sesiones activas
+  // Get active session statistics
   async getActiveSessionsStats(req, res, next) {
     try {
-      logger.info("📊 Consultando estadísticas de sesiones activas");
+      logger.info("Fetching active session statistics");
 
       const activeSessions = await ParkingSessionRepository.findAllActive();
 
@@ -139,7 +139,7 @@ class SessionController {
         }),
       };
 
-      logger.info("✅ Estadísticas generadas", {
+      logger.info("Session statistics generated", {
         totalSessions: stats.total_active_sessions,
       });
 
@@ -148,7 +148,7 @@ class SessionController {
         data: stats,
       });
     } catch (error) {
-      logger.error("❌ Error al generar estadísticas", {
+      logger.error("Error generating session statistics", {
         error: error.message,
       });
       next(error);

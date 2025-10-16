@@ -84,3 +84,6 @@
 {"ip":"::1","level":"info","message":"Incoming request","method":"POST","service":"parking-api","timestamp":"2025-10-16 09:30:07","url":"/api/ocr/upload","userAgent":"PostmanRuntime/7.48.0"}
 {"fileName":"2472312100_d839026cb9_b.jpg","fileSize":152030,"level":"info","message":"🚗 Procesando entrada de vehículo","mimeType":"image/jpeg","service":"parking-api","timestamp":"2025-10-16 09:30:07"}
 {"confidence":0.9305440187454224,"level":"info","message":"✅ Entrada registrada exitosamente","plate":"IBC314","service":"parking-api","sessionId":12,"timestamp":"2025-10-16 09:30:09"}
+{"ip":"::1","level":"info","message":"Incoming request","method":"GET","service":"parking-api","timestamp":"2025-10-16 09:39:52","url":"/api/sessions/stats","userAgent":"PostmanRuntime/7.48.0"}
+{"level":"info","message":"📊 Consultando estadísticas de sesiones activas","service":"parking-api","timestamp":"2025-10-16 09:39:52"}
+{"level":"info","message":"✅ Estadísticas generadas","service":"parking-api","timestamp":"2025-10-16 09:39:52","totalSessions":5}

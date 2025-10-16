@@ -8,60 +8,60 @@ class ParkingController {
     try {
       const { plate, method, transaction_ref } = req.body;
 
-      // Validaciones
+      // Validate
       if (!plate || !method) {
-        throw createError("Faltan campos obligatorios: plate y method", 400);
+        throw createError("Required fields are missing: plate y method", 400);
       }
 
-      logger.info("💳 Iniciando registro de pago", {
+      logger.info("Starting payment registration", {
         plate,
         method,
         transaction_ref,
       });
 
-      // Buscar sesión activa
+      // Search active sessions
       const session = await ParkingSessionRepository.findActiveWithRate(plate);
       if (!session) {
-        throw createError("No hay sesión activa para esta placa", 404);
+        throw createError("There is no active session for this plate", 404);
       }
 
-      logger.info("📊 Sesión activa encontrada", {
+      logger.info("Active session found", {
         plate,
         sessionId: session.id_parking,
         entryTime: session.entry_time,
       });
 
-      // Calcular tiempo en minutos
+      // Calculate time in minutes
       const entryTime = new Date(session.entry_time);
       const exitTime = new Date();
       let totalMinutes = Math.ceil((exitTime - entryTime) / 60000);
 
-      // Aplicar minutos de gracia
+      // Apply grace minutes
       if (session.grace_minutes && totalMinutes <= session.grace_minutes) {
-        logger.info("🎁 Aplicando minutos de gracia", {
+        logger.info("Apply grace minutes", {
           totalMinutes,
           graceMinutes: session.grace_minutes,
         });
         totalMinutes = 0;
       }
 
-      // Calcular precio total
+      // Calculate total price
       let totalPrice = totalMinutes * session.price_per_minute;
       if (session.min_charge && totalPrice < session.min_charge) {
-        logger.info("💰 Aplicando cobro mínimo", {
+        logger.info("Applying minimum charge", {
           calculatedPrice: totalPrice,
           minCharge: session.min_charge,
         });
         totalPrice = session.min_charge;
       }
 
-      logger.info("🧮 Cálculo de precio completado", {
+      logger.info("Completed price calculation", {
         totalMinutes,
         pricePerMinute: session.price_per_minute,
         totalPrice,
       });
 
-      // Registrar pago
+      // Register payment
       await PaymentRepository.registerPayment({
         vehicle_plate: plate,
         amount: totalPrice,
@@ -70,7 +70,7 @@ class ParkingController {
         transaction_ref: transaction_ref || null,
       });
 
-      // Cerrar sesión
+      // Close Session
       await ParkingSessionRepository.closeSession(
         session.id_parking,
         exitTime,
@@ -78,7 +78,7 @@ class ParkingController {
         totalPrice
       );
 
-      logger.info("✅ Pago completado exitosamente", {
+      logger.info("Payment completed successfully", {
         plate,
         sessionId: session.id_parking,
         totalPrice,
@@ -87,7 +87,7 @@ class ParkingController {
       });
 
       res.json({
-        message: "Pago registrado y sesión cerrada correctamente",
+        message: "Payment recorded and session closed successfully",
         details: {
           plate,
           totalMinutes,
@@ -97,7 +97,7 @@ class ParkingController {
       });
 
     } catch (error) {
-      logger.error("❌ Error al registrar pago", {
+      logger.error("Error registering payment", {
         error: error.message,
         plate: req.body.plate,
         method: req.body.method,

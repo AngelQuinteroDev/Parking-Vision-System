@@ -3,9 +3,9 @@ import easyocr
 import cv2
 import numpy as np
 
-# Carga el modelo YOLO (usa tu archivo .pt)
+# Load the YOLO model (using a .pt file)
 yolo_model = YOLO("models/best.pt")
-reader = easyocr.Reader(['en'], gpu=False)  # GPU=True si tienes CUDA local
+reader = easyocr.Reader(['en'], gpu=False) 
 
 def detect_license_plate(image_bytes: bytes):
     nparr = np.frombuffer(image_bytes, np.uint8)

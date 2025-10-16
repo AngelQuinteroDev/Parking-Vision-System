@@ -1,7 +1,7 @@
 // src/middlewares/errorHandler.js
 import logger from "../utils/logger.js";
 
-// 🎯 Clase personalizada para errores de la aplicación
+// Custom application error class
 export class AppError extends Error {
   constructor(message, statusCode = 500, isOperational = true) {
     super(message);
@@ -12,58 +12,58 @@ export class AppError extends Error {
   }
 }
 
-// 🔴 Manejo de errores de base de datos
+// Database error handling
 function handleDatabaseError(err) {
-  // Error de sintaxis SQL
+  // SQL syntax error
   if (err.code === "ER_PARSE_ERROR" || err.sqlMessage) {
-    logger.error("🔴 SQL Error", {
+    logger.error("SQL Error", {
       code: err.code,
       sqlMessage: err.sqlMessage,
       sql: err.sql,
     });
-    return new AppError("Error en la consulta a la base de datos", 500);
+    return new AppError("Database query error", 500);
   }
 
-  // Clave duplicada
+  // Duplicate key
   if (err.code === "ER_DUP_ENTRY") {
-    return new AppError("Ya existe un registro con esos datos", 409);
+    return new AppError("A record with these details already exists", 409);
   }
 
   // Foreign key constraint
   if (err.code === "ER_NO_REFERENCED_ROW_2") {
-    return new AppError("Referencia inválida en la base de datos", 400);
+    return new AppError("Invalid database reference", 400);
   }
 
   return err;
 }
 
-// 🔴 Manejo de errores de validación
+// Validation error handling
 function handleValidationError(err) {
   if (err.name === "ValidationError") {
     const errors = Object.values(err.errors).map((el) => el.message);
-    return new AppError(`Datos inválidos: ${errors.join(", ")}`, 400);
+    return new AppError(`Invalid data: ${errors.join(", ")}`, 400);
   }
   return err;
 }
 
-// 🛡️ Middleware principal de manejo de errores
+// Main error handling middleware
 export function errorHandler(err, req, res, next) {
   let error = { ...err };
   error.message = err.message;
   error.stack = err.stack;
 
-  // Log del error con contexto completo
+  // Log the error with full context
   logger.logError(err, req);
 
-  // 🔍 Identificar y transformar tipos específicos de errores
+  // Identify and transform specific error types
   error = handleDatabaseError(error);
   error = handleValidationError(error);
 
-  // 📊 Determinar código de estado
+  // Determine status code
   const statusCode = error.statusCode || err.status || 500;
   const status = error.status || "error";
 
-  // 🚨 Respuesta en desarrollo (con stack trace)
+  // Development response (with stack trace)
   if (process.env.NODE_ENV === "development") {
     return res.status(statusCode).json({
       status,
@@ -78,8 +78,8 @@ export function errorHandler(err, req, res, next) {
     });
   }
 
-  // 🔒 Respuesta en producción (sin información sensible)
-  // Errores operacionales (esperados y controlados)
+  // Production response (no sensitive info)
+  // Operational errors (expected and handled)
   if (error.isOperational) {
     return res.status(statusCode).json({
       status,
@@ -87,25 +87,25 @@ export function errorHandler(err, req, res, next) {
     });
   }
 
-  // Errores de programación o desconocidos
-  logger.error("💥 ERROR CRÍTICO NO CONTROLADO", {
+  // Programming or unknown errors
+  logger.error("UNHANDLED CRITICAL ERROR", {
     error: err,
     stack: err.stack,
   });
 
   return res.status(500).json({
     status: "error",
-    message: "Algo salió mal. Por favor intenta de nuevo más tarde.",
+    message: "Something went wrong. Please try again later.",
   });
 }
 
-// 🔍 Middleware para rutas no encontradas (404)
+// Middleware for 404 routes
 export function notFoundHandler(req, res, next) {
-  const error = new AppError(`No se encontró la ruta ${req.originalUrl}`, 404);
+  const error = new AppError(`Route not found: ${req.originalUrl}`, 404);
   next(error);
 }
 
-// 🎯 Helper para crear errores rápidamente
+// Helper to quickly create errors
 export const createError = (message, statusCode = 500) => {
   return new AppError(message, statusCode);
 };

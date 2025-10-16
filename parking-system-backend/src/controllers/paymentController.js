@@ -7,19 +7,19 @@ class PaymentController {
     try {
       const { plate } = req.params;
 
-      // Validación
+      // Validation
       if (!plate) {
-        throw createError("Placa no proporcionada", 400);
+        throw createError("License plate not provided", 400);
       }
 
-      logger.info("💳 Procesando pago", {
+      logger.info("Processing payment", {
         plate,
         paymentData: req.body,
       });
 
       const result = await paymentService.processPayment(plate, req.body);
 
-      logger.info("✅ Pago procesado exitosamente", {
+      logger.info("Payment processed successfully", {
         plate,
         result,
       });
@@ -27,7 +27,7 @@ class PaymentController {
       res.json(result);
 
     } catch (error) {
-      logger.error("❌ Error al procesar pago", {
+      logger.error("Error processing payment", {
         error: error.message,
         plate: req.params.plate,
         body: req.body,
