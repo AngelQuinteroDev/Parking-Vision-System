@@ -23,3 +23,43 @@
 [2025-10-16 01:49:29] [32minfo[39m: POST /api/parking/pay
 [2025-10-16 01:49:29] [31merror[39m: ❌ Error en registerPayment: Data truncated for column 'payment_status' at row 1
 [2025-10-16 01:49:29] [31merror[39m: Data truncated for column 'payment_status' at row 1 - POST /api/parking/pay
+[2025-10-16 01:51:36] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 01:51:36] [32minfo[39m: 💳 Pago completado para OGU210
+[2025-10-16 02:02:19] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 02:02:19] [31merror[39m: Expected double-quoted property name in JSON at position 46 (line 4 column 1) - POST /api/parking/pay
+[2025-10-16 02:02:31] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 02:03:45] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 02:08:12] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 02:08:12] [31merror[39m: ❌ Error en registerPayment: Unknown column 'r.id_rate' in 'on clause'
+[2025-10-16 02:08:12] [31merror[39m: Unknown column 'r.id_rate' in 'on clause' - POST /api/parking/pay
+[2025-10-16 02:09:33] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 02:09:33] [31merror[39m: ❌ Error en registerPayment: Unknown column 'r.rate_id' in 'on clause'
+[2025-10-16 02:09:33] [31merror[39m: Unknown column 'r.rate_id' in 'on clause' - POST /api/parking/pay
+[2025-10-16 02:12:40] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 02:12:40] [32minfo[39m: 💳 Pago completado para OMg650
+[2025-10-16 02:23:45] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 02:23:45] [32minfo[39m: 💳 Pago completado para CFO682
+[2025-10-16 02:29:10] [32minfo[39m: POST /api/ocr/upload
+[2025-10-16 02:32:26] [32minfo[39m: POST /api/ocr/upload
+[2025-10-16 02:33:26] [32minfo[39m: POST /api/ocr/upload
+[2025-10-16 02:33:51] [32minfo[39m: POST /api/ocr/upload
+[2025-10-16 02:34:10] [32minfo[39m: POST /api/ocr/upload
+[2025-10-16 02:37:32] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 02:37:32] [32minfo[39m: 💳 Pago completado para IBC314
+[2025-10-16 02:37:57] [32minfo[39m: POST /api/ocr/upload
+[2025-10-16 03:44:15] [32minfo[39m: POST /api/ocr/exit
+[2025-10-16 03:44:15] [31merror[39m: detectLicensePlate is not defined - POST /api/ocr/exit
+[2025-10-16 03:52:43] [32minfo[39m: POST /api/ocr/exit
+[2025-10-16 03:52:49] [31merror[39m: ParkingSessionRepository is not defined - POST /api/ocr/exit
+[2025-10-16 03:55:06] [32minfo[39m: POST /api/ocr/exit
+[2025-10-16 03:55:08] [31merror[39m: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ', `plate` = 'IBC314', `place_plate` = 'BUCARAMANGA', `confidence` = 0.9305440187' at line 1 - POST /api/ocr/exit
+[2025-10-16 03:57:59] [32minfo[39m: POST /api/ocr/exit
+[2025-10-16 03:58:01] [31merror[39m: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ', `plate` = 'IBC314', `place_plate` = 'BUCARAMANGA', `confidence` = 0.9305440187' at line 1 - POST /api/ocr/exit
+[2025-10-16 04:00:30] [32minfo[39m: POST /api/ocr/exit
+[2025-10-16 04:00:32] [31merror[39m: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ', `plate` = 'IBC314', `place_plate` = 'BUCARAMANGA', `confidence` = 0.9305440187' at line 1 - POST /api/ocr/exit
+[2025-10-16 04:00:51] [32minfo[39m: POST /api/ocr/upload
+[2025-10-16 04:01:03] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 04:01:04] [32minfo[39m: 💳 Pago completado para IBC314
+[2025-10-16 04:01:08] [32minfo[39m: POST /api/ocr/exit
+[2025-10-16 04:01:10] [31merror[39m: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ', `plate` = 'IBC314', `place_plate` = 'BUCARAMANGA', `confidence` = 0.9305440187' at line 1 - POST /api/ocr/exit
+[2025-10-16 04:01:13] [32minfo[39m: POST /api/ocr/upload

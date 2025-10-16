@@ -33,7 +33,7 @@ class ParkingSessionRepository {
   async closeSession(id_parking, exit_time, total_time_minutes, total_price) {
     await pool.query(
       `UPDATE parking_sessions 
-       SET exit_time=?, total_time_minutes=?, total_price=?, is_paid=0, active=0 
+       SET exit_time=?, total_time_minutes=?, total_price=?, is_paid=1, active=0 
        WHERE id_parking=?`,
       [exit_time, total_time_minutes, total_price, id_parking]
     );
@@ -50,6 +50,20 @@ class ParkingSessionRepository {
       [is_paid, id_parking]
     );
   }
+
+
+  async findActiveWithRate(plate) {
+  const [rows] = await pool.query(
+    `SELECT ps.*, r.price_per_minute, r.min_charge, r.grace_minutes
+     FROM parking_sessions ps
+     JOIN rates r ON ps.rate_id = r.id_rates
+     WHERE ps.vehicle_plate = ? AND ps.active = 1
+     LIMIT 1`,
+    [plate]
+  );
+  if (rows.length === 0) return null;
+  return rows[0];
+}
 }
 
 export default new ParkingSessionRepository();
