@@ -63,3 +63,10 @@
 [2025-10-16 04:01:08] [32minfo[39m: POST /api/ocr/exit
 [2025-10-16 04:01:10] [31merror[39m: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ', `plate` = 'IBC314', `place_plate` = 'BUCARAMANGA', `confidence` = 0.9305440187' at line 1 - POST /api/ocr/exit
 [2025-10-16 04:01:13] [32minfo[39m: POST /api/ocr/upload
+[2025-10-16 04:05:23] [32minfo[39m: POST /api/ocr/exit
+[2025-10-16 04:05:35] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 04:05:35] [32minfo[39m: 💳 Pago completado para IBC314
+[2025-10-16 04:05:39] [32minfo[39m: POST /api/ocr/exit
+[2025-10-16 04:05:48] [32minfo[39m: POST /api/parking/pay
+[2025-10-16 04:05:54] [32minfo[39m: POST /api/ocr/upload
+[2025-10-16 04:12:56] [32minfo[39m: GET /api/sessions/active

@@ -1,42 +1,67 @@
-import  ParkingSessionRepository  from "../repositories/parkingSessionRepository.js";
-import PaymentRepository  from "../repositories/paymentRepository.js";
+import ParkingSessionRepository from "../repositories/parkingSessionRepository.js";
+import PaymentRepository from "../repositories/paymentRepository.js";
 import logger from "../utils/logger.js";
+import { createError } from "../middleware/errorHandler.js";
 
 class ParkingController {
-  // Registrar pago y cerrar sesión
   async registerPayment(req, res, next) {
     try {
       const { plate, method, transaction_ref } = req.body;
 
+      // Validaciones
       if (!plate || !method) {
-        return res.status(400).json({ message: "Faltan campos obligatorios" });
+        throw createError("Faltan campos obligatorios: plate y method", 400);
       }
 
+      logger.info("💳 Iniciando registro de pago", {
+        plate,
+        method,
+        transaction_ref,
+      });
 
+      // Buscar sesión activa
       const session = await ParkingSessionRepository.findActiveWithRate(plate);
       if (!session) {
-        return res.status(404).json({ message: "No hay sesión activa para esta placa" });
+        throw createError("No hay sesión activa para esta placa", 404);
       }
 
-      // 📌 Calcular tiempo en minutos
+      logger.info("📊 Sesión activa encontrada", {
+        plate,
+        sessionId: session.id_parking,
+        entryTime: session.entry_time,
+      });
+
+      // Calcular tiempo en minutos
       const entryTime = new Date(session.entry_time);
       const exitTime = new Date();
-      let totalMinutes = Math.ceil((exitTime - entryTime) / 60000); // diferencia en ms / 60000 = minutos
-      
-      // Aplicar minutos de gracia si aplica
+      let totalMinutes = Math.ceil((exitTime - entryTime) / 60000);
+
+      // Aplicar minutos de gracia
       if (session.grace_minutes && totalMinutes <= session.grace_minutes) {
+        logger.info("🎁 Aplicando minutos de gracia", {
+          totalMinutes,
+          graceMinutes: session.grace_minutes,
+        });
         totalMinutes = 0;
       }
-      
-      // 📌 Calcular total_price
+
+      // Calcular precio total
       let totalPrice = totalMinutes * session.price_per_minute;
       if (session.min_charge && totalPrice < session.min_charge) {
+        logger.info("💰 Aplicando cobro mínimo", {
+          calculatedPrice: totalPrice,
+          minCharge: session.min_charge,
+        });
         totalPrice = session.min_charge;
       }
 
+      logger.info("🧮 Cálculo de precio completado", {
+        totalMinutes,
+        pricePerMinute: session.price_per_minute,
+        totalPrice,
+      });
 
-
-
+      // Registrar pago
       await PaymentRepository.registerPayment({
         vehicle_plate: plate,
         amount: totalPrice,
@@ -45,18 +70,38 @@ class ParkingController {
         transaction_ref: transaction_ref || null,
       });
 
-
+      // Cerrar sesión
       await ParkingSessionRepository.closeSession(
         session.id_parking,
-        exitTime,        // exit_time
-        totalMinutes,    // total_time_minutes
-        totalPrice       // total_price
+        exitTime,
+        totalMinutes,
+        totalPrice
       );
 
-      logger.info(`💳 Pago completado para ${plate}`);
-      res.json({ message: "Pago registrado y sesión cerrada correctamente" });
+      logger.info("✅ Pago completado exitosamente", {
+        plate,
+        sessionId: session.id_parking,
+        totalPrice,
+        totalMinutes,
+        method,
+      });
+
+      res.json({
+        message: "Pago registrado y sesión cerrada correctamente",
+        details: {
+          plate,
+          totalMinutes,
+          totalPrice,
+          paymentMethod: method,
+        },
+      });
+
     } catch (error) {
-      logger.error(`❌ Error en registerPayment: ${error.message}`);
+      logger.error("❌ Error al registrar pago", {
+        error: error.message,
+        plate: req.body.plate,
+        method: req.body.method,
+      });
       next(error);
     }
   }
