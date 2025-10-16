@@ -8,16 +8,16 @@ const __dirname = path.dirname(__filename);
 
 const { combine, timestamp, printf, colorize, errors, json } = winston.format;
 
-// 🎨 Formato para consola (con colores y legible)
+// Console format 
 const consoleFormat = printf(({ level, message, timestamp, stack, ...metadata }) => {
   let log = `[${timestamp}] ${level}: ${message}`;
   
-  // Si hay metadata adicional (como req, user, etc)
+  // If there is additional metadata (such as req, user, etc.)
   if (Object.keys(metadata).length > 0) {
     log += `\n📋 Metadata: ${JSON.stringify(metadata, null, 2)}`;
   }
   
-  // Si hay stack trace (errores)
+  // If there is a stack trace (errors)
   if (stack) {
     log += `\n🔴 Stack: ${stack}`;
   }
@@ -25,28 +25,28 @@ const consoleFormat = printf(({ level, message, timestamp, stack, ...metadata })
   return log;
 });
 
-// 📄 Formato para archivos (JSON estructurado para análisis)
+// File format (structured JSON for parsing)
 const fileFormat = combine(
-  errors({ stack: true }), // Captura stack traces
+  errors({ stack: true }), // Capture stack traces
   timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-  json() // Guarda en JSON para poder analizar después
+  json() // save JSON
 );
 
-// 🎯 Crear el logger
+// create logger
 const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || "info", // Configurable por ambiente
+  level: process.env.LOG_LEVEL || "info", 
   format: fileFormat,
-  defaultMeta: { service: "parking-api" }, // Identifica tu servicio
+  defaultMeta: { service: "parking-api" }, // Identify yours servicio
   transports: [
-    // 📁 Errores críticos (solo level: error)
+    // Critical errors (level: error only)
     new winston.transports.File({ 
       filename: path.join(__dirname, "../../logs/error.log"),
       level: "error",
       maxsize: 5242880, // 5MB
-      maxFiles: 5, // Mantiene 5 archivos rotados
+      maxFiles: 5, // max files 
     }),
     
-    // 📁 Warnings (problemas no críticos)
+    //  Warnings 
     new winston.transports.File({ 
       filename: path.join(__dirname, "../../logs/warn.log"),
       level: "warn",
@@ -54,7 +54,7 @@ const logger = winston.createLogger({
       maxFiles: 3,
     }),
     
-    // 📁 Todo (info, warn, error)
+    //  all
     new winston.transports.File({ 
       filename: path.join(__dirname, "../../logs/combined.log"),
       maxsize: 10485760, // 10MB
@@ -63,7 +63,7 @@ const logger = winston.createLogger({
   ],
 });
 
-// 🖥️ En desarrollo, también mostrar en consola con colores
+// Consolo for production
 if (process.env.NODE_ENV !== "production") {
   logger.add(new winston.transports.Console({
     format: combine(
@@ -74,7 +74,7 @@ if (process.env.NODE_ENV !== "production") {
   }));
 }
 
-// 🔧 Métodos helper para logging específico
+//  Helper methods for specific logging
 logger.logRequest = (req) => {
   logger.info("Incoming request", {
     method: req.method,

@@ -3,15 +3,15 @@ import parkingSessionRepo from "../repositories/parkingSessionRepository.js";
 class ParkingService {
   async processExit(plate) {
     const session = await parkingSessionRepo.findActiveByPlate(plate);
-    if (!session) return { allowed: false, message: "No hay sesión activa" };
+    if (!session) return { allowed: false, message: "There is no active session" };
 
     if (!session.is_paid) {
-      return { allowed: false, message: "El vehículo no ha pagado" };
+      return { allowed: false, message: "The vehicle has not paid" };
     }
 
     await parkingSessionRepo.closeSession(session.id_parking);
 
-    return { allowed: true, message: "Salida permitida. Buen viaje!" };
+    return { allowed: true, message: "Exit permitted" };
   }
 }
 

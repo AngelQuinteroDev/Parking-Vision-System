@@ -3,22 +3,22 @@ import sessionController from "../controllers/sessionController.js";
 
 const router = express.Router();
 
-// 📋 GET /api/sessions/active - Obtener todas las sesiones activas
+// GET /api/sessions/active - Get all active sessions
 router.get("/active", (req, res, next) => {
   sessionController.getAllActiveSessions(req, res, next);
 });
 
-// 📊 GET /api/sessions/stats - Obtener estadísticas de sesiones activas
+// GET /api/sessions/stats - Get statistics of active sessions
 router.get("/stats", (req, res, next) => {
   sessionController.getActiveSessionsStats(req, res, next);
 });
 
-// 🔍 GET /api/sessions/active/:plate - Obtener sesión activa por placa
+// GET /api/sessions/active/:plate - Get active session by plate
 router.get("/active/:plate", (req, res, next) => {
   sessionController.getActiveSessionByPlate(req, res, next);
 });
 
-// 📊 GET /api/sessions/active/:plate/rate - Obtener sesión activa con tarifa
+// GET /api/sessions/active/:plate/rate - Get an active session with a fee
 router.get("/active/:plate/rate", (req, res, next) => {
   sessionController.getActiveSessionWithRate(req, res, next);
 });

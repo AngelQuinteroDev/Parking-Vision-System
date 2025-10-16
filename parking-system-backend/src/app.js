@@ -18,13 +18,13 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rutas
+// Routes
 app.use("/api/ocr", ocrRoutes);
 app.use("/api/parking", parkingRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/sessions", sessionRoutes);
 
-// Middleware de manejo de errores (siempre al final)
+// Error handling middleware
 app.use(errorHandler);
 app.use(notFoundHandler);
 

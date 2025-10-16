@@ -4,7 +4,7 @@ import parkingSessionRepo from "../repositories/parkingSessionRepository.js";
 class PaymentService {
   async processPayment(plate, paymentData) {
     const session = await parkingSessionRepo.findActiveByPlate(plate);
-    if (!session) throw new Error("No hay sesión activa para este vehículo.");
+    if (!session) throw new Error("There is no active session for this vehicle.");
 
     const now = new Date();
     const entry = new Date(session.entry_time);
@@ -13,7 +13,7 @@ class PaymentService {
     const ratePerMin = session.price_per_minute;
     const total = Math.max(totalMinutes * ratePerMin, session.min_charge);
 
-    // Registrar pago
+    // Register payment
     const payment = await paymentRepo.create({
       vehicle_plate: plate,
       amount: total,
@@ -22,7 +22,7 @@ class PaymentService {
       transaction_ref: paymentData.transaction_ref || null,
     });
 
-    // Actualizar sesión
+    // Update session
     await parkingSessionRepo.updatePayment(session.id_parking, {
       payment_id: payment.payment_id,
       is_paid: 1,
@@ -30,7 +30,7 @@ class PaymentService {
       total_price: total,
     });
 
-    return { message: "Pago registrado exitosamente", total, payment };
+    return { message: "Payment successfully registered", total, payment };
   }
 }
 
