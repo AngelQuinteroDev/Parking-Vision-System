@@ -1,10 +1,10 @@
 import express from "express";
 import multer from "multer";
-import { detectPlate } from "../controllers/ocrController.js";
+import ocrController  from "../controllers/ocrController.js";
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-router.post("/upload", upload.single("image"), detectPlate);
+router.post("/upload", upload.single("image"), (req, res) => ocrController.detectEntrance(req, res));
 
 export default router;

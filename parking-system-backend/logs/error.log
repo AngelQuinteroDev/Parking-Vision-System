@@ -1,0 +1,6 @@
+[2025-10-16 01:42:24] [31merror[39m: ❌ Error en registerPayment: ParkingSessionRepository.findActiveSession is not a function
+[2025-10-16 01:42:24] [31merror[39m: next is not a function - POST /api/parking/pay
+[2025-10-16 01:47:59] [31merror[39m: ❌ Error en registerPayment: PaymentRepository.registerPayment is not a function
+[2025-10-16 01:47:59] [31merror[39m: PaymentRepository.registerPayment is not a function - POST /api/parking/pay
+[2025-10-16 01:49:29] [31merror[39m: ❌ Error en registerPayment: Data truncated for column 'payment_status' at row 1
+[2025-10-16 01:49:29] [31merror[39m: Data truncated for column 'payment_status' at row 1 - POST /api/parking/pay

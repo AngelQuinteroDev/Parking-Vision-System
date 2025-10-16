@@ -2,7 +2,7 @@ import pool from "../config/database.js";
 import Payment from "../models/paymentModel.js";
 
 class PaymentRepository {
-  async create(payment) {
+  async registerPayment(payment) {
     const [result] = await pool.query(
       `INSERT INTO payments 
         (vehicle_plate, amount, payment_method, payment_status, transaction_ref, payment_date)
@@ -27,6 +27,15 @@ class PaymentRepository {
   async findByVehiclePlate(plate) {
     const [rows] = await pool.query(`SELECT * FROM payments WHERE vehicle_plate = ?`, [plate]);
     return rows.map((row) => new Payment(row));
+  }
+
+
+  async hasPaid(vehicle_plate) {
+    const [rows] = await pool.query(
+      `SELECT * FROM payments WHERE vehicle_plate = ? AND payment_status = 'PAID' ORDER BY payment_date DESC LIMIT 1`,
+      [vehicle_plate]
+    );
+    return !!rows[0];
   }
 
   async updateStatus(payment_id, status) {
