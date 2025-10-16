@@ -68,4 +68,5 @@ Main Tables
 | **POST** | `/api/ocr/exit` | Processes vehicle exit; blocks if payment is pending. |
 | **POST** | `/api/parking/pay` | Registers a payment and closes the parking session. |
 | **GET**  | `/api/sessions/active` | Lists all currently active parking sessions. |
+| **GET**  | `/api/sessions/stats` | Displays session statistics. |
 
