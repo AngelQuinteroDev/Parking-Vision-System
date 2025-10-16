@@ -57,3 +57,15 @@ Main Tables
 + rates
 + payments
 + audit_logs
+
+
+## 🔗 Endpoints Overview
+
+| Method | Endpoint | Description |
+|--------|-----------|-------------|
+| **POST** | `/detect` | Detects license plates in uploaded images (Vision API - FastAPI). |
+| **POST** | `/api/ocr/entrance` | Processes vehicle entry and creates a new parking session. |
+| **POST** | `/api/ocr/exit` | Processes vehicle exit; blocks if payment is pending. |
+| **POST** | `/api/parking/pay` | Registers a payment and closes the parking session. |
+| **GET**  | `/api/sessions/active` | Lists all currently active parking sessions. |
+
