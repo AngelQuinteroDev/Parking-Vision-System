@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import ocrRoutes from "./routes/ocrRoutes.js";
 import parkingRoutes from "./routes/parkingRoutes.js"; // ← agrega esto
+import sessionRoutes from "./routes/sessionRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 import logger from "./utils/logger.js";
 
 dotenv.config();
@@ -19,6 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 // Rutas
 app.use("/api/ocr", ocrRoutes);
 app.use("/api/parking", parkingRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/sessions", sessionRoutes);
 
 // Middleware de manejo de errores (siempre al final)
 app.use(errorHandler);

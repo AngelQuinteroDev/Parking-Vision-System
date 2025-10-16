@@ -70,3 +70,17 @@
 [2025-10-16 04:05:48] [32minfo[39m: POST /api/parking/pay
 [2025-10-16 04:05:54] [32minfo[39m: POST /api/ocr/upload
 [2025-10-16 04:12:56] [32minfo[39m: GET /api/sessions/active
+{"ip":"::1","level":"info","message":"Incoming request","method":"POST","service":"parking-api","timestamp":"2025-10-16 09:29:37","url":"/api/ocr/upload","userAgent":"PostmanRuntime/7.48.0"}
+{"fileName":"2472312100_d839026cb9_b.jpg","fileSize":152030,"level":"info","message":"🚗 Procesando entrada de vehículo","mimeType":"image/jpeg","service":"parking-api","timestamp":"2025-10-16 09:29:37"}
+{"level":"info","message":"✅ Entrada registrada exitosamente","plate":"IBC314","service":"parking-api","timestamp":"2025-10-16 09:29:41"}
+{"ip":"::1","level":"info","message":"Incoming request","method":"POST","service":"parking-api","timestamp":"2025-10-16 09:29:48","url":"/api/parking/pay","userAgent":"PostmanRuntime/7.48.0"}
+{"level":"info","message":"💳 Iniciando registro de pago","method":"CASH","plate":"IBC314","service":"parking-api","timestamp":"2025-10-16 09:29:48"}
+{"entryTime":"2025-10-16T09:05:56.000Z","level":"info","message":"📊 Sesión activa encontrada","plate":"IBC314","service":"parking-api","sessionId":11,"timestamp":"2025-10-16 09:29:48"}
+{"level":"info","message":"🧮 Cálculo de precio completado","pricePerMinute":0.05,"service":"parking-api","timestamp":"2025-10-16 09:29:48","totalMinutes":324,"totalPrice":16.2}
+{"level":"info","message":"✅ Pago completado exitosamente","method":"CASH","plate":"IBC314","service":"parking-api","sessionId":11,"timestamp":"2025-10-16 09:29:48","totalMinutes":324,"totalPrice":16.2}
+{"ip":"::1","level":"info","message":"Incoming request","method":"POST","service":"parking-api","timestamp":"2025-10-16 09:30:00","url":"/api/ocr/exit","userAgent":"PostmanRuntime/7.48.0"}
+{"fileName":"2472312100_d839026cb9_b.jpg","level":"info","message":"🚪 Procesando salida de vehículo","service":"parking-api","timestamp":"2025-10-16 09:30:00"}
+{"level":"info","message":"✅ Salida permitida Salida permitida, no hay sesión activa","plate":"IBC314","service":"parking-api","timestamp":"2025-10-16 09:30:01"}
+{"ip":"::1","level":"info","message":"Incoming request","method":"POST","service":"parking-api","timestamp":"2025-10-16 09:30:07","url":"/api/ocr/upload","userAgent":"PostmanRuntime/7.48.0"}
+{"fileName":"2472312100_d839026cb9_b.jpg","fileSize":152030,"level":"info","message":"🚗 Procesando entrada de vehículo","mimeType":"image/jpeg","service":"parking-api","timestamp":"2025-10-16 09:30:07"}
+{"confidence":0.9305440187454224,"level":"info","message":"✅ Entrada registrada exitosamente","plate":"IBC314","service":"parking-api","sessionId":12,"timestamp":"2025-10-16 09:30:09"}
